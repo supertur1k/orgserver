@@ -1,12 +1,12 @@
 package com.medicine.orgserver.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "roles")
-public class Role {
+@Table(name = "medicaments")
+public class Medicament {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
