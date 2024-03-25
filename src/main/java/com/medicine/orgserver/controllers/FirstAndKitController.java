@@ -1,8 +1,8 @@
 package com.medicine.orgserver.controllers;
 
 
-import com.medicine.orgserver.dto.AddMedIntoFirstAndKitDTO;
-import com.medicine.orgserver.services.FirstAndKitMedicamentsService;
+import com.medicine.orgserver.dto.AddMedIntoFirstAidKitDTO;
+import com.medicine.orgserver.services.FirstAidKitMedicamentsService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,17 +14,17 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class FirstAndKitController {
-    private final FirstAndKitMedicamentsService userMedicamentsService;
+    private final FirstAidKitMedicamentsService userMedicamentsService;
 
 
     @GetMapping("/getMedicamentsForFirstAndKitById")
     public ResponseEntity<?> allUserMedicamentsByNameOfTheUser(@RequestParam Long id) {
-        return userMedicamentsService.getMedicamentsCollectionByFirstAndKitId(id);
+        return userMedicamentsService.getMedicamentsCollectionByFirstAidKitId(id);
     }
 
     @PostMapping("/addMedicamentIntoFirstAndKitById")
-    public ResponseEntity<?> setMedicamentToUser(@RequestBody AddMedIntoFirstAndKitDTO addMedToFirstAndKitDTO) {
-        return userMedicamentsService.addMedicamentIntoFirstAndKitById(addMedToFirstAndKitDTO);
+    public ResponseEntity<?> setMedicamentToUser(@RequestBody AddMedIntoFirstAidKitDTO addMedToFirstAndKitDTO) {
+        return userMedicamentsService.addMedicamentIntoFirstAidKitById(addMedToFirstAndKitDTO);
     }
 
     @DeleteMapping("/hardDeleteMedicamentForUser")

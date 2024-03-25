@@ -1,8 +1,8 @@
 package com.medicine.orgserver.controllers;
 
 
-import com.medicine.orgserver.dto.FirstAndKitDTO;
-import com.medicine.orgserver.dto.FirstAndKitIdUsernameDTO;
+import com.medicine.orgserver.dto.FirstAidKitDTO;
+import com.medicine.orgserver.dto.FirstAidKitIdUsernameDTO;
 import com.medicine.orgserver.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,26 +21,26 @@ public class UserDataController {
 
     @GetMapping("/getFirstAndKitsByUsername")
     public ResponseEntity<?> getFirstAndKitsByUsername(@RequestParam String username) {
-        return userService.getFirstAndKitsByUsername(username);
+        return userService.getFirstAidKitsByUsername(username);
     }
 
 
     @PostMapping("/creteFirstAndKitForUser")
     @Operation(summary = "Создание аптечки для пользователя")
-    public ResponseEntity<?> createFirstAndKitForUser(@RequestBody FirstAndKitDTO firstAndKitDTO) {
-        return userService.createFirstAndKitForUser(firstAndKitDTO);
+    public ResponseEntity<?> createFirstAndKitForUser(@RequestBody FirstAidKitDTO firstAidKitDTO) {
+        return userService.createFirstAidKitForUser(firstAidKitDTO);
     }
 
     @DeleteMapping("/removeFirstAndFromForUser")
     @Operation(summary = "Отключаем аптечку от пользователя",
     description = "Если у аптечки нет других пользователей, она сотрется из хранилища.")
-    public ResponseEntity<?> removeFirstAndFromForUser(@RequestBody FirstAndKitIdUsernameDTO firstAndKitIdUsernameDTO) {
-        return userService.removeFirstAndFromForUser(firstAndKitIdUsernameDTO);
+    public ResponseEntity<?> removeFirstAndFromForUser(@RequestBody FirstAidKitIdUsernameDTO firstAidKitIdUsernameDTO) {
+        return userService.removeFirstAidFromForUser(firstAidKitIdUsernameDTO);
     }
 
     @PostMapping("/addExistingFirstAidKitToUser")
     @Operation(summary = "Подключить пользователя к существующей аптечке")
-    public ResponseEntity<?> addAanExistingFirstAidKitToUser(@RequestBody FirstAndKitIdUsernameDTO firstAndKitIdUsernameDTO) {
-        return userService.addExistingFirstAidKitToUser(firstAndKitIdUsernameDTO);
+    public ResponseEntity<?> addAanExistingFirstAidKitToUser(@RequestBody FirstAidKitIdUsernameDTO firstAidKitIdUsernameDTO) {
+        return userService.addExistingFirstAidKitToUser(firstAidKitIdUsernameDTO);
     }
 }

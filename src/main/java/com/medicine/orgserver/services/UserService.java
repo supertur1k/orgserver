@@ -1,14 +1,14 @@
 package com.medicine.orgserver.services;
 
-import com.medicine.orgserver.dto.FirstAndKitDTO;
+import com.medicine.orgserver.dto.FirstAidKitDTO;
 import com.medicine.orgserver.dto.RegUserDto;
-import com.medicine.orgserver.dto.FirstAndKitIdUsernameDTO;
-import com.medicine.orgserver.entities.FirstAndKit;
-import com.medicine.orgserver.entities.FirstAndKitUser;
+import com.medicine.orgserver.dto.FirstAidKitIdUsernameDTO;
+import com.medicine.orgserver.entities.FirstAidKit;
+import com.medicine.orgserver.entities.FirstAidKitUser;
 import com.medicine.orgserver.entities.User;
 import com.medicine.orgserver.exceptions.AppError;
-import com.medicine.orgserver.repositories.FirstAndKitRepository;
-import com.medicine.orgserver.repositories.FirstAndKitUserRepository;
+import com.medicine.orgserver.repositories.FirstAidKitRepository;
+import com.medicine.orgserver.repositories.FirstAidKitUserRepository;
 import com.medicine.orgserver.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -37,92 +37,92 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RolesService rolesService;
     private final PasswordEncoder passwordEncoder;
-    private final FirstAndKitRepository firstAndKitRepository;
-    private final FirstAndKitUserRepository firstAndKitUserRepository;
+    private final FirstAidKitRepository firstAidKitRepository;
+    private final FirstAidKitUserRepository firstAidKitUserRepository;
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    public ResponseEntity<?> getFirstAndKitsByUsername(String username) {
+    public ResponseEntity<?> getFirstAidKitsByUsername(String username) {
         if (this.findByUsername(username).isEmpty()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Пользователь не найден"), HttpStatus.BAD_REQUEST);
         }
-        return  ResponseEntity.ok(this.findByUsername(username).get().getFirstAndKits());
+        return  ResponseEntity.ok(this.findByUsername(username).get().getFirstAidKits());
     }
 
     @Transactional
-    public ResponseEntity<?> createFirstAndKitForUser(FirstAndKitDTO firstAndKitDTO) {
-        if (this.findByUsername(firstAndKitDTO.getUsername()).isEmpty()) {
+    public ResponseEntity<?> createFirstAidKitForUser(FirstAidKitDTO firstAidKitDTO) {
+        if (this.findByUsername(firstAidKitDTO.getUsername()).isEmpty()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Пользователь не найден"), HttpStatus.BAD_REQUEST);
         }
-        User user = this.findByUsername(firstAndKitDTO.getUsername()).get();
+        User user = this.findByUsername(firstAidKitDTO.getUsername()).get();
 
-        FirstAndKit firstAndKit = new FirstAndKit();
-        firstAndKit.setName_of_the_first_and_kit(firstAndKitDTO.getName_of_the_first_and_kit());
-        if (!firstAndKitDTO.getDescription().isBlank()) firstAndKit.setDescription(firstAndKitDTO.getDescription());
-        firstAndKitRepository.save(firstAndKit);
+        FirstAidKit firstAidKit = new FirstAidKit();
+        firstAidKit.setName_of_the_first_aid_kit(firstAidKitDTO.getName_of_the_first_aid_kit());
+        if (!firstAidKitDTO.getDescription().isBlank()) firstAidKit.setDescription(firstAidKitDTO.getDescription());
+        firstAidKitRepository.save(firstAidKit);
 
-        Collection<FirstAndKit> firstAndKits = user.getFirstAndKits();
-        firstAndKits.add(firstAndKit);
-        user.setFirstAndKits(firstAndKits);
+        Collection<FirstAidKit> firstAidKits = user.getFirstAidKits();
+        firstAidKits.add(firstAidKit);
+        user.setFirstAidKits(firstAidKits);
         userRepository.save(user);
 
-        return ResponseEntity.ok(user.getFirstAndKits());
+        return ResponseEntity.ok(user.getFirstAidKits());
     }
 
     @Transactional
-    public ResponseEntity<?> removeFirstAndFromForUser(FirstAndKitIdUsernameDTO firstAndKitIdUsernameDTO) {
-        if (this.findByUsername(firstAndKitIdUsernameDTO.getUsername()).isEmpty()) {
+    public ResponseEntity<?> removeFirstAidFromForUser(FirstAidKitIdUsernameDTO firstAidKitIdUsernameDTO) {
+        if (this.findByUsername(firstAidKitIdUsernameDTO.getUsername()).isEmpty()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Пользователь не найден"), HttpStatus.BAD_REQUEST);
         }
-        if (firstAndKitRepository.findById(firstAndKitIdUsernameDTO.getFirst_and_kit_id()).isEmpty()) {
+        if (firstAidKitRepository.findById(firstAidKitIdUsernameDTO.getFirst_aid_kit_id()).isEmpty()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Аптечка с переданным id не существует"), HttpStatus.BAD_REQUEST);
         }
-        User user = this.findByUsername(firstAndKitIdUsernameDTO.getUsername()).get();
-        Collection<FirstAndKit> firstAndKits = user.getFirstAndKits();
-        Optional<FirstAndKit> userFirstAndKit = firstAndKits.stream().filter(firstAndKit ->
-                Objects.equals(firstAndKit.getId(), firstAndKitIdUsernameDTO.getFirst_and_kit_id())).findFirst();
-        if (userFirstAndKit.isEmpty()) {
+        User user = this.findByUsername(firstAidKitIdUsernameDTO.getUsername()).get();
+        Collection<FirstAidKit> firstAidKits = user.getFirstAidKits();
+        Optional<FirstAidKit> userFirstAidKit = firstAidKits.stream().filter(firstAidKit ->
+                Objects.equals(firstAidKit.getId(), firstAidKitIdUsernameDTO.getFirst_aid_kit_id())).findFirst();
+        if (userFirstAidKit.isEmpty()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Аптечка с переданным id не найдена у пользователя"), HttpStatus.BAD_REQUEST);
         }
-        firstAndKits.remove(userFirstAndKit.get());
-        user.setFirstAndKits(firstAndKits);
+        firstAidKits.remove(userFirstAidKit.get());
+        user.setFirstAidKits(firstAidKits);
         userRepository.save(user);
 
 
-        FirstAndKit firstAndKit = firstAndKitRepository.findById(firstAndKitIdUsernameDTO.getFirst_and_kit_id()).get();
+        FirstAidKit firstAidKit = firstAidKitRepository.findById(firstAidKitIdUsernameDTO.getFirst_aid_kit_id()).get();
 
-        if (firstAndKitUserRepository.findByFirstAndKitId(firstAndKit).isEmpty()) {
-            firstAndKitRepository.deleteById(firstAndKitIdUsernameDTO.getFirst_and_kit_id());
+        if (firstAidKitUserRepository.findByFirstAidKitId(firstAidKit).isEmpty()) {
+            firstAidKitRepository.deleteById(firstAidKitIdUsernameDTO.getFirst_aid_kit_id());
         }
-        return ResponseEntity.ok(user.getFirstAndKits());
+        return ResponseEntity.ok(user.getFirstAidKits());
     }
 
     @Transactional
-    public ResponseEntity<?> addExistingFirstAidKitToUser(FirstAndKitIdUsernameDTO firstAndKitIdUsernameDTO) {
-        if (this.findByUsername(firstAndKitIdUsernameDTO.getUsername()).isEmpty()) {
+    public ResponseEntity<?> addExistingFirstAidKitToUser(FirstAidKitIdUsernameDTO firstAidKitIdUsernameDTO) {
+        if (this.findByUsername(firstAidKitIdUsernameDTO.getUsername()).isEmpty()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Пользователь не найден"), HttpStatus.BAD_REQUEST);
         }
-        if (firstAndKitRepository.findById(firstAndKitIdUsernameDTO.getFirst_and_kit_id()).isEmpty()) {
+        if (firstAidKitRepository.findById(firstAidKitIdUsernameDTO.getFirst_aid_kit_id()).isEmpty()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Аптечка с переданным id не существует"), HttpStatus.BAD_REQUEST);
         }
-        User user = this.findByUsername(firstAndKitIdUsernameDTO.getUsername()).get();
-        FirstAndKit firstAndKit = firstAndKitRepository.findById(firstAndKitIdUsernameDTO.getFirst_and_kit_id()).get();
+        User user = this.findByUsername(firstAidKitIdUsernameDTO.getUsername()).get();
+        FirstAidKit firstAidKit = firstAidKitRepository.findById(firstAidKitIdUsernameDTO.getFirst_aid_kit_id()).get();
 
-        FirstAndKitUser firstAndKitUser = new FirstAndKitUser();
-        firstAndKitUser.setUser_id(user);
-        firstAndKitUser.setFirst_and_kit_id(firstAndKit);
-        firstAndKitUserRepository.save(firstAndKitUser);
+        FirstAidKitUser firstAidKitUser = new FirstAidKitUser();
+        firstAidKitUser.setUser_id(user);
+        firstAidKitUser.setFirst_aid_kit_id(firstAidKit);
+        firstAidKitUserRepository.save(firstAidKitUser);
 
-        return ResponseEntity.ok(user.getFirstAndKits());
+        return ResponseEntity.ok(user.getFirstAidKits());
     }
 
 

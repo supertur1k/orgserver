@@ -34,10 +34,10 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-            name="first_and_kit_user",
+            name="first_aid_kit_user",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "first_and_kit_id")
+            inverseJoinColumns = @JoinColumn(name = "first_aid_kit_id")
     )
-    private Collection<FirstAndKit> firstAndKits;
+    private Collection<FirstAidKit> firstAidKits;
 
 }

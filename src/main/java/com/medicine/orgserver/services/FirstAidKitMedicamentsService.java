@@ -1,11 +1,11 @@
 package com.medicine.orgserver.services;
 
-import com.medicine.orgserver.dto.AddMedIntoFirstAndKitDTO;
+import com.medicine.orgserver.dto.AddMedIntoFirstAidKitDTO;
 import com.medicine.orgserver.dto.MedicamentDTO;
-import com.medicine.orgserver.entities.FirstAndKit;
+import com.medicine.orgserver.entities.FirstAidKit;
 import com.medicine.orgserver.entities.Medicament;
 import com.medicine.orgserver.exceptions.AppError;
-import com.medicine.orgserver.repositories.FirstAndKitRepository;
+import com.medicine.orgserver.repositories.FirstAidKitRepository;
 import com.medicine.orgserver.repositories.MedicamentRepository;
 import com.medicine.orgserver.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,25 +20,25 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class FirstAndKitMedicamentsService {
+public class FirstAidKitMedicamentsService {
 
     private final UserRepository userRepository;
     private final MedicamentRepository medicamentRepository;
     private final MedicamentService medicamentService;
-    private final FirstAndKitRepository firstAndKitRepository;
+    private final FirstAidKitRepository firstAidKitRepository;
 
-    public ResponseEntity<?> getMedicamentsCollectionByFirstAndKitId(Long id) {
-        Optional<FirstAndKit> firstAndKit = firstAndKitRepository.findById(id);
-        if (firstAndKit.isEmpty()) {
+    public ResponseEntity<?> getMedicamentsCollectionByFirstAidKitId(Long id) {
+        Optional<FirstAidKit> firstAidKit = firstAidKitRepository.findById(id);
+        if (firstAidKit.isEmpty()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Аптечка с переданным id не существует"), HttpStatus.BAD_REQUEST);
         }
-        return  ResponseEntity.ok(firstAndKit.get().getMedicaments());
+        return  ResponseEntity.ok(firstAidKit.get().getMedicaments());
     }
 
-    public ResponseEntity<?> addMedicamentIntoFirstAndKitById(AddMedIntoFirstAndKitDTO addMedToUserDTO) {
-        Optional<FirstAndKit> firstAndKit = firstAndKitRepository.findById(addMedToUserDTO.getId());
-        if (firstAndKit.isEmpty()) {
+    public ResponseEntity<?> addMedicamentIntoFirstAidKitById(AddMedIntoFirstAidKitDTO addMedToUserDTO) {
+        Optional<FirstAidKit> firstAidKit = firstAidKitRepository.findById(addMedToUserDTO.getId());
+        if (firstAidKit.isEmpty()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Аптечка с переданным id не существует"), HttpStatus.BAD_REQUEST);
         }
@@ -49,36 +49,36 @@ public class FirstAndKitMedicamentsService {
             medicament = medicamentRepository.findByName(addMedToUserDTO.getNameOfTheMedicament()).get();
         }
 
-        Collection<Medicament> medicamentCollection = firstAndKit.get().getMedicaments();
+        Collection<Medicament> medicamentCollection = firstAidKit.get().getMedicaments();
         medicamentCollection.add(medicament);
-        firstAndKit.get().setMedicaments(medicamentCollection);
-        firstAndKitRepository.save(firstAndKit.get());
+        firstAidKit.get().setMedicaments(medicamentCollection);
+        firstAidKitRepository.save(firstAidKit.get());
 
-        return  ResponseEntity.ok(firstAndKit.get().getMedicaments());
+        return  ResponseEntity.ok(firstAidKit.get().getMedicaments());
     }
 
     public ResponseEntity<?> deleteMedicamentForUser(Long id, String medicamentName) {
-        Optional<FirstAndKit> firstAndKit = firstAndKitRepository.findById(id);
-        if (firstAndKit.isEmpty()) {
+        Optional<FirstAidKit> firstAidKit = firstAidKitRepository.findById(id);
+        if (firstAidKit.isEmpty()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Аптечка с переданным id не существует"), HttpStatus.BAD_REQUEST);
         }
-        if (firstAndKit.get().getMedicaments().isEmpty()
-            || firstAndKit.get().getMedicaments().stream()
+        if (firstAidKit.get().getMedicaments().isEmpty()
+            || firstAidKit.get().getMedicaments().stream()
                 .filter(medicament -> medicament
                         .getName().equals(medicamentName)).findFirst().isEmpty()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Медикамент с указанным именем не найден в аптечке с переданным id"), HttpStatus.BAD_REQUEST);
         }
 
-        Collection<Medicament> medicamentCollection = firstAndKit.get().getMedicaments();
+        Collection<Medicament> medicamentCollection = firstAidKit.get().getMedicaments();
         Medicament medicamentToBeRemoved = medicamentCollection.stream()
                 .filter(medicament -> medicament.getName().equals(medicamentName)).findFirst().orElseThrow();
         medicamentCollection.remove(medicamentToBeRemoved);
-        firstAndKit.get().setMedicaments(medicamentCollection);
-        firstAndKitRepository.save(firstAndKit.get());
+        firstAidKit.get().setMedicaments(medicamentCollection);
+        firstAidKitRepository.save(firstAidKit.get());
 
-        return  ResponseEntity.ok(firstAndKit.get().getMedicaments());
+        return  ResponseEntity.ok(firstAidKit.get().getMedicaments());
     }
 
 }

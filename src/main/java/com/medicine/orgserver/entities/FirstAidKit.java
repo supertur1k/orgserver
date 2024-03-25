@@ -7,8 +7,8 @@ import java.util.Collection;
 
 @Entity
 @Data
-@Table(name = "first_and_kit")
-public class FirstAndKit {
+@Table(name = "first_aid_kit")
+public class FirstAidKit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,15 +16,15 @@ public class FirstAndKit {
     private Long id;
 
     @Column(nullable = false)
-    private String name_of_the_first_and_kit;
+    private String name_of_the_first_aid_kit;
 
     @Column
     private String description;
 
     @ManyToMany
     @JoinTable(
-            name="first_and_kit_medicaments",
-            joinColumns = @JoinColumn(name = "first_and_kit_id"),
+            name="first_aid_kit_medicaments",
+            joinColumns = @JoinColumn(name = "first_aid_kit_id"),
             inverseJoinColumns = @JoinColumn(name = "medicament_id")
     )
     private Collection<Medicament> medicaments;

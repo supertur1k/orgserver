@@ -5,13 +5,13 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "first_and_kit_medicaments")
+@Table(name = "first_aid_kit_medicaments")
 public class FirstAndKitMedicaments {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "first_and_kit_id", nullable = false)
-    private FirstAndKit first_and_kit_id;
+    @JoinColumn(name = "first_aid_kit_id", nullable = false)
+    private FirstAidKit first_aid_kit_id;
 
     @Id
     @ManyToOne

@@ -5,14 +5,14 @@ import lombok.Data;
 
 @Entity
 @Data
-@IdClass(FirstAndKitUserId.class)
-@Table(name = "first_and_kit_user")
-public class FirstAndKitUser {
+@IdClass(FirstAidKitUserId.class)
+@Table(name = "first_aid_kit_user")
+public class FirstAidKitUser {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "first_and_kit_id", nullable = false)
-    private FirstAndKit first_and_kit_id;
+    @JoinColumn(name = "first_aid_kit_id", nullable = false)
+    private FirstAidKit first_aid_kit_id;
 
     @Id
     @ManyToOne
