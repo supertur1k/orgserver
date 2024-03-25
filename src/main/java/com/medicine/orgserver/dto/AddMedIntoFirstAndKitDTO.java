@@ -6,7 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AddMedToUserDTO {
-    String username;
+public class AddMedIntoFirstAndKitDTO {
+    Long id;
     String nameOfTheMedicament;
 }

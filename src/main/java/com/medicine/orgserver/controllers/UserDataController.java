@@ -1,9 +1,12 @@
 package com.medicine.orgserver.controllers;
 
 
-import com.medicine.orgserver.dto.AddMedToUserDTO;
-import com.medicine.orgserver.services.UserMedicamentsService;
+import com.medicine.orgserver.dto.FirstAndKitDTO;
+import com.medicine.orgserver.dto.FirstAndKitIdUsernameDTO;
+import com.medicine.orgserver.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,21 +17,30 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class UserDataController {
-    private final UserMedicamentsService userMedicamentsService;
+    private final UserService userService;
 
-
-    @GetMapping("/getMedicamentsForUser")
-    public ResponseEntity<?> allUserMedicamentsByNameOfTheUser(@RequestParam String name) {
-        return userMedicamentsService.getMedicamentsCollectionByUserName(name);
+    @GetMapping("/getFirstAndKitsByUsername")
+    public ResponseEntity<?> getFirstAndKitsByUsername(@RequestParam String username) {
+        return userService.getFirstAndKitsByUsername(username);
     }
 
-    @PostMapping("/setMedicamentInUserMedicamentsStorage")
-    public ResponseEntity<?> setMedicamentToUser(@RequestBody AddMedToUserDTO addMedToUserDTO) {
-        return userMedicamentsService.setMedicamentToUserByName(addMedToUserDTO);
+
+    @PostMapping("/creteFirstAndKitForUser")
+    @Operation(summary = "Создание аптечки для пользователя")
+    public ResponseEntity<?> createFirstAndKitForUser(@RequestBody FirstAndKitDTO firstAndKitDTO) {
+        return userService.createFirstAndKitForUser(firstAndKitDTO);
     }
 
-    @DeleteMapping("/hardDeleteMedicamentForUser")
-    public ResponseEntity<?> deleteMedicamentForUser(@RequestParam String username, String medicament_name) {
-        return userMedicamentsService.deleteMedicamentForUser(username, medicament_name);
+    @DeleteMapping("/removeFirstAndFromForUser")
+    @Operation(summary = "Отключаем аптечку от пользователя",
+    description = "Если у аптечки нет других пользователей, она сотрется из хранилища.")
+    public ResponseEntity<?> removeFirstAndFromForUser(@RequestBody FirstAndKitIdUsernameDTO firstAndKitIdUsernameDTO) {
+        return userService.removeFirstAndFromForUser(firstAndKitIdUsernameDTO);
+    }
+
+    @PostMapping("/addExistingFirstAidKitToUser")
+    @Operation(summary = "Подключить пользователя к существующей аптечке")
+    public ResponseEntity<?> addAanExistingFirstAidKitToUser(@RequestBody FirstAndKitIdUsernameDTO firstAndKitIdUsernameDTO) {
+        return userService.addExistingFirstAidKitToUser(firstAndKitIdUsernameDTO);
     }
 }
