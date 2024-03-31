@@ -32,15 +32,19 @@ public class AuthService {
         }
         UserDetails userDetails = userService.loadUserByUsername(jwtRequest.getUsername());
         String token = jwtTokensUtils.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.ok(new JwtResponse(token,  userService.getIdByUsername(jwtRequest.getUsername())));
     }
 
     public ResponseEntity<?> createNewUser(@RequestBody RegUserDto registrationUserDto) {
+        if (registrationUserDto.getEmail().isBlank() || registrationUserDto.getUsername().isBlank()
+            || registrationUserDto.getPassword().isBlank() || registrationUserDto.getConfirmPassword().isBlank()) {
+            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Не все поля заполнены"), HttpStatus.BAD_REQUEST);
+        }
         if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword())) {
-            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пароли не совпадают . . . "), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пароли не совпадают"), HttpStatus.BAD_REQUEST);
         }
         if (userService.findByUsername(registrationUserDto.getUsername()).isPresent()) {
-            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с переданным юзернеймом уже существует"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с указанным именем уже существует"), HttpStatus.BAD_REQUEST);
         }
 
         User user = userService.createNewUser(registrationUserDto);
