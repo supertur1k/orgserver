@@ -10,7 +10,7 @@
 //    @Bean
 //    public NewTopic newTopic() {
 //        return new NewTopic(
-//                "course",
+//                "medicineTakeNotification",
 //                1,
 //                (short) 1
 //        );

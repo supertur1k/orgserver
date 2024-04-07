@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@IdClass(FirstAidKitMedicamentId.class)
 @Table(name = "first_aid_kit_medicaments")
 public class FirstAndKitMedicaments {
 

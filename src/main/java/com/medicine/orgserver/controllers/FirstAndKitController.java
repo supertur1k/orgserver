@@ -2,6 +2,7 @@ package com.medicine.orgserver.controllers;
 
 
 import com.medicine.orgserver.dto.AddMedIntoFirstAidKitDTO;
+import com.medicine.orgserver.dto.AddMedicamentIntoFAKBarcode;
 import com.medicine.orgserver.services.FirstAidKitMedicamentsService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,11 @@ public class FirstAndKitController {
     @PostMapping("/addMedicamentIntoFirstAndKitById")
     public ResponseEntity<?> setMedicamentToUser(@RequestBody AddMedIntoFirstAidKitDTO addMedToFirstAndKitDTO) {
         return userMedicamentsService.addMedicamentIntoFirstAidKitById(addMedToFirstAndKitDTO);
+    }
+
+    @PostMapping("/addMedicamentIntoFirstAndKitByBarcode")
+    public ResponseEntity<?> setMedicamentToUserBarcode(@RequestBody AddMedicamentIntoFAKBarcode addMedicamentIntoFAKBarcode) {
+        return userMedicamentsService.addMedicamentIntoFirstAidKitByBarcode(addMedicamentIntoFAKBarcode);
     }
 
     @DeleteMapping("/hardDeleteMedicamentForUser")

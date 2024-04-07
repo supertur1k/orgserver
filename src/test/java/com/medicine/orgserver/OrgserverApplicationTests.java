@@ -1,9 +1,8 @@
 package com.medicine.orgserver;
 
-import com.medicine.orgserver.dto.RLSxmlDto;
-import org.checkerframework.common.value.qual.IntRange;
+import com.medicine.orgserver.getInfoByBarCode.parser.GetNameByBarCode;
+import com.medicine.orgserver.getInfoByBarCode.parser.getInfoByNameFromEapteka;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -11,13 +10,9 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toCollection;
 
@@ -39,6 +34,13 @@ class OrgserverApplicationTests {
 		String c = prep_shorts.stream().filter(x->x.contains("ЦИТРАМОН")).findFirst().get();
 		String usr = document.getElementsByTagName("prep_short").item(0).getTextContent();
 		//String pwd = document.getElementsByTagName("password").item(0).getTextContent();
+	}
+
+	@Test
+	void rlsData() throws Exception {
+
+		new getInfoByNameFromEapteka().getInfoOfMedicament(new GetNameByBarCode().getNameOfMedicament("5000158105553"));
+
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.medicine.orgserver.controllers;
 
 
+import com.medicine.orgserver.dto.AddMedicamentIntoFAKBarcode;
 import com.medicine.orgserver.dto.FirstAidKitDTO;
 import com.medicine.orgserver.dto.FirstAidKitIdUsernameDTO;
 import com.medicine.orgserver.services.UserService;

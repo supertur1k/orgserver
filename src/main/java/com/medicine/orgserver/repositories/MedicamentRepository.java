@@ -12,4 +12,6 @@ import java.util.Optional;
 @Repository
 public interface MedicamentRepository extends JpaRepository<Medicament, Integer> {
     Optional<Medicament> findByName(String name);
+    Optional<Medicament> findByBarcode(String barcode);
+    Optional<Medicament> findById(Long id);
 }

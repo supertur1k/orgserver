@@ -1,5 +1,6 @@
 package com.medicine.orgserver;
 
+import com.medicine.orgserver.services.RLSService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
