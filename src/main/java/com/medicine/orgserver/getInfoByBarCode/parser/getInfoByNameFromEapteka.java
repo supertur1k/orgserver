@@ -16,13 +16,14 @@ public class getInfoByNameFromEapteka {
     static final String url = "https://apteka.ru/";
     static final String searchInputFieldXpath = "//input[@type='search']";
     static final String searchButtonXpath = "//button[@type='submit' and .='Искать']";
+    static final String firstElementInCardCatalogXpath = "//div[@class='CardsGrid']//div[contains(@class,'card-order')]//button";
 
+    static final String allSpecificationsXpath = "//span[text()='Все характеристики']";
     public MedicamentFromAptekaRuInfo getInfoOfMedicament(String name) {
         MedicamentFromAptekaRuInfo medicament = new MedicamentFromAptekaRuInfo();
         Configuration.browser = "chrome";
         Configuration.pageLoadStrategy="normal";
         Configuration.browserSize = "1280x720";
-        //String barcode = "5000158105553";
 
         Selenide.open(url);
 
@@ -42,7 +43,13 @@ public class getInfoByNameFromEapteka {
                 .sendKeys(name);
         $x(searchButtonXpath).should(exist, visible, interactable).click();
 
-        $x("//span[text()='Все характеристики']").should(exist, visible).click();
+        $x(firstElementInCardCatalogXpath + " | " + allSpecificationsXpath).should(exist);
+        if ($x(allSpecificationsXpath).exists()) {
+            $x(allSpecificationsXpath).should(exist, visible).click();
+        } else {
+            $x(firstElementInCardCatalogXpath).should(exist).scrollIntoView(true).click();
+            $x(allSpecificationsXpath).should(exist, visible).click();
+        }
 
         // форма выпуска
         String releaseForm = null;
