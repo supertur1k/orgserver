@@ -4,6 +4,8 @@ package com.medicine.orgserver.controllers;
 import com.medicine.orgserver.dto.AddMedicamentIntoFAKBarcode;
 import com.medicine.orgserver.dto.FirstAidKitDTO;
 import com.medicine.orgserver.dto.FirstAidKitIdUsernameDTO;
+import com.medicine.orgserver.dto.ScheduleDTO;
+import com.medicine.orgserver.services.ScheduleService;
 import com.medicine.orgserver.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserDataController {
     private final UserService userService;
+    private final ScheduleService scheduleService;
 
     @GetMapping("/getFirstAndKitsByUsername")
     public ResponseEntity<?> getFirstAndKitsByUsername(@RequestParam String username) {
@@ -44,4 +47,23 @@ public class UserDataController {
     public ResponseEntity<?> addAanExistingFirstAidKitToUser(@RequestBody FirstAidKitIdUsernameDTO firstAidKitIdUsernameDTO) {
         return userService.addExistingFirstAidKitToUser(firstAidKitIdUsernameDTO);
     }
+
+    @PostMapping("/createSchedule")
+    @Operation(summary = "Создать график приема лекартсва")
+    public ResponseEntity<?> createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
+        return scheduleService.createScheduleForUser(scheduleDTO);
+    }
+
+    @GetMapping("/getSchedulesForUser")
+    @Operation(summary = "Создать график приема лекартсва")
+    public ResponseEntity<?> getSchedule(@RequestParam String username) {
+        return scheduleService.getSchedulesForUser(username);
+    }
+
+    @DeleteMapping("/deleteSchedule")
+    @Operation(summary = "Удалить график преима лекарств")
+    public ResponseEntity<?> deleteSchedule(@RequestParam Long id) {
+        return scheduleService.deleteScheduleForUser(id);
+    }
+
 }
