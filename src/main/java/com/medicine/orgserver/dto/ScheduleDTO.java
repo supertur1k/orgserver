@@ -15,7 +15,7 @@ public class ScheduleDTO {
     private String username;
     private String name;
     private String comment;
-    private Object amount;
+    private String amount;
     private Integer duration;
     private List<String> daysOfWeeks;
     private List<String> times;
