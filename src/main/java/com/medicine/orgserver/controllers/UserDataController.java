@@ -5,6 +5,7 @@ import com.medicine.orgserver.dto.AddMedicamentIntoFAKBarcode;
 import com.medicine.orgserver.dto.FirstAidKitDTO;
 import com.medicine.orgserver.dto.FirstAidKitIdUsernameDTO;
 import com.medicine.orgserver.dto.ScheduleDTO;
+import com.medicine.orgserver.services.NotificationService;
 import com.medicine.orgserver.services.ScheduleService;
 import com.medicine.orgserver.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserDataController {
     private final UserService userService;
     private final ScheduleService scheduleService;
+    private final NotificationService notificationService;
 
     @GetMapping("/getFirstAndKitsByUsername")
     public ResponseEntity<?> getFirstAndKitsByUsername(@RequestParam String username) {
@@ -65,5 +67,19 @@ public class UserDataController {
     public ResponseEntity<?> deleteSchedule(@RequestParam Long id) {
         return scheduleService.deleteScheduleForUser(id);
     }
+
+    @GetMapping("/getNotifications")
+    @Operation(summary = "Получить список нотификаций для пользователя")
+    public ResponseEntity<?> getNotifications(@RequestParam String username) {
+        return notificationService.getNotificationsForUser(username);
+    }
+
+    @DeleteMapping("/deleteNotification")
+    @Operation(summary = "Удалить нотификацию по id")
+    public ResponseEntity<?> deleteNotification(@RequestParam Long id) {
+        return notificationService.deleteNotificationForUser(id);
+    }
+
+
 
 }

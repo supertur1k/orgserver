@@ -1,9 +1,11 @@
 package com.medicine.orgserver.services;
 
 import com.medicine.orgserver.dto.ScheduleDTO;
+import com.medicine.orgserver.entities.Notification;
 import com.medicine.orgserver.entities.Schedule;
 import com.medicine.orgserver.entities.User;
 import com.medicine.orgserver.exceptions.AppError;
+import com.medicine.orgserver.repositories.NotificationRepository;
 import com.medicine.orgserver.repositories.ScheduleRepository;
 import com.medicine.orgserver.repositories.UserRepository;
 import jakarta.transaction.Transactional;
@@ -13,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -22,7 +27,7 @@ public class ScheduleService {
 
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
-
+    private final NotificationRepository notificationRepository;
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -56,6 +61,31 @@ public class ScheduleService {
         schedule.setTimes(scheduleDTO.getTimes());
 
         scheduleRepository.save(schedule);
+        Long scheduleId = schedule.getIdOfSchedule();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE", Locale.ENGLISH);
+
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = startDate.plusDays(scheduleDTO.getDuration());
+        LocalDate currentDate = startDate;
+
+        while (!currentDate.isAfter(endDate)) {
+            if (scheduleDTO.getDaysOfWeeks().contains(currentDate.format(formatter).toLowerCase())) {
+                LocalDate finalCurrentDate = currentDate;
+                scheduleDTO.getTimes().forEach(x -> {
+                    Notification notification = new Notification();
+                    notification.setIdOfTheSchedule(scheduleId);
+                    notification.setUsername(scheduleDTO.getUsername());
+                    notification.setName(scheduleDTO.getName());
+                    notification.setAmount("" + scheduleDTO.getAmount());
+                    notification.setComment(scheduleDTO.getComment());
+                    notification.setDayOfTheWeek(finalCurrentDate);
+                    notification.setTime(x);
+                    notificationRepository.save(notification);
+                });
+            }
+            currentDate = currentDate.plusDays(1);
+        }
 
         return ResponseEntity.ok(scheduleRepository.findByUsername(user.getUsername()));
     }
@@ -81,6 +111,8 @@ public class ScheduleService {
         scheduleRepository.deleteDaysOfWeeksByScheduleId(idOfSchedule);
         scheduleRepository.deleteTimesByScheduleId(idOfSchedule);
         scheduleRepository.deleteById(idOfSchedule);
+
+        notificationRepository.deleteAllByIdOfTheSchedule(idOfSchedule);
 
         return ResponseEntity.ok(scheduleRepository.findByUsername(username));
     }
