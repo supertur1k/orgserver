@@ -17,8 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -40,7 +42,9 @@ public class NotificationService {
                     "Пользователь не найден"), HttpStatus.BAD_REQUEST);
         }
 
-        return ResponseEntity.ok(notificationRepository.findByUsername(username));
+        Collection<Notification> notifications = notificationRepository.findByUsername(username)
+                .stream().filter(x->x.getDayOfTheWeek().isBefore(LocalDate.now().plusDays(1))).collect(Collectors.toList());
+        return ResponseEntity.ok(notifications);
     }
 
     @Transactional
