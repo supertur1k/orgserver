@@ -37,4 +37,7 @@ public class Notification {
     @Column
     private String time;
 
+    @Column
+    private Boolean received = false;
+
 }

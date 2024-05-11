@@ -2,6 +2,7 @@ package com.medicine.orgserver.services;
 
 import com.medicine.orgserver.dto.FirstAidKitDTO;
 import com.medicine.orgserver.dto.FirstAidKitIdUsernameDTO;
+import com.medicine.orgserver.dto.FirstAidKitIdUsernameDTO2Users;
 import com.medicine.orgserver.dto.RegUserDto;
 import com.medicine.orgserver.entities.FirstAidKit;
 import com.medicine.orgserver.entities.FirstAidKitUser;
@@ -128,17 +129,17 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public ResponseEntity<?> notificationForAddingExistingFirstAidKitToUser(FirstAidKitIdUsernameDTO firstAidKitIdUsernameDTO) {
-        if (this.findByUsername(firstAidKitIdUsernameDTO.getUsername()).isEmpty()) {
+    public ResponseEntity<?> notificationForAddingExistingFirstAidKitToUser(FirstAidKitIdUsernameDTO2Users firstAidKitIdUsernameDTO2Users) {
+        if (this.findByUsername(firstAidKitIdUsernameDTO2Users.getUsername()).isEmpty()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Пользователь не найден"), HttpStatus.BAD_REQUEST);
         }
-        if (firstAidKitRepository.findById(firstAidKitIdUsernameDTO.getFirst_aid_kit_id()).isEmpty()) {
+        if (firstAidKitRepository.findById(firstAidKitIdUsernameDTO2Users.getFirst_aid_kit_id()).isEmpty()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Аптечка с переданным id не существует"), HttpStatus.BAD_REQUEST);
         }
 
-        return notificationService.createNotificationForUser(firstAidKitIdUsernameDTO);
+        return notificationService.createNotificationForUser(firstAidKitIdUsernameDTO2Users);
     }
 
 

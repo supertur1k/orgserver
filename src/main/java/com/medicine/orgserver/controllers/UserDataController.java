@@ -1,10 +1,7 @@
 package com.medicine.orgserver.controllers;
 
 
-import com.medicine.orgserver.dto.AddMedicamentIntoFAKBarcode;
-import com.medicine.orgserver.dto.FirstAidKitDTO;
-import com.medicine.orgserver.dto.FirstAidKitIdUsernameDTO;
-import com.medicine.orgserver.dto.ScheduleDTO;
+import com.medicine.orgserver.dto.*;
 import com.medicine.orgserver.services.NotificationService;
 import com.medicine.orgserver.services.ScheduleService;
 import com.medicine.orgserver.services.UserService;
@@ -52,8 +49,8 @@ public class UserDataController {
 
     @PostMapping("/createNotificationInviteToFak")
     @Operation(summary = "Создать уведомление с приглашением к аптечке")
-    public ResponseEntity<?> createNotificationInviteToFak(@RequestBody FirstAidKitIdUsernameDTO firstAidKitIdUsernameDTO) {
-        return userService.notificationForAddingExistingFirstAidKitToUser(firstAidKitIdUsernameDTO);
+    public ResponseEntity<?> createNotificationInviteToFak(@RequestBody FirstAidKitIdUsernameDTO2Users firstAidKitIdUsernameDTO2Users) {
+        return userService.notificationForAddingExistingFirstAidKitToUser(firstAidKitIdUsernameDTO2Users);
     }
 
     @PostMapping("/createSchedule")
@@ -84,6 +81,12 @@ public class UserDataController {
     @Operation(summary = "Удалить нотификацию по id")
     public ResponseEntity<?> deleteNotification(@RequestParam Long id) {
         return notificationService.deleteNotificationForUser(id);
+    }
+
+    @PostMapping("/readNotification")
+    @Operation(summary = "Пометить нотификацию как прочитанную по id")
+    public ResponseEntity<?> markNotificationAsRead(@RequestParam Long id, String username) {
+        return notificationService.readNotification(id, username);
     }
 
 
