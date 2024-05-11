@@ -22,19 +22,19 @@ public class Notification {
     @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column
     private String name;
 
     @Column
     private String comment;
 
-    @Column(nullable = false)
+    @Column
     private String amount;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate dayOfTheWeek;
 
-    @Column(nullable = false)
+    @Column
     private String time;
 
 }

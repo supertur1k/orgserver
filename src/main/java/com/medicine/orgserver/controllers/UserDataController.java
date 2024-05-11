@@ -50,6 +50,12 @@ public class UserDataController {
         return userService.addExistingFirstAidKitToUser(firstAidKitIdUsernameDTO);
     }
 
+    @PostMapping("/createNotificationInviteToFak")
+    @Operation(summary = "Создать уведомление с приглашением к аптечке")
+    public ResponseEntity<?> createNotificationInviteToFak(@RequestBody FirstAidKitIdUsernameDTO firstAidKitIdUsernameDTO) {
+        return userService.notificationForAddingExistingFirstAidKitToUser(firstAidKitIdUsernameDTO);
+    }
+
     @PostMapping("/createSchedule")
     @Operation(summary = "Создать график приема лекартсва")
     public ResponseEntity<?> createSchedule(@RequestBody ScheduleDTO scheduleDTO) {

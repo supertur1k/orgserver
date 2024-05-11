@@ -1,5 +1,6 @@
 package com.medicine.orgserver.services;
 
+import com.medicine.orgserver.dto.AddMedIntoFirstAidKitDTO;
 import com.medicine.orgserver.dto.MedicamentDTO;
 import com.medicine.orgserver.dto.MedicamentFromAptekaRuInfo;
 import com.medicine.orgserver.entities.Medicament;
@@ -45,6 +46,16 @@ public class MedicamentService {
             medicament.setContraindications(medicamentFromAptekaRuInfo.getContraindications());
 
 
+        return medicamentRepository.save(medicament);
+    }
+
+    public Medicament createNewMedicament(AddMedIntoFirstAidKitDTO addMedToUserDTO) {
+        Medicament medicament = new Medicament();
+        medicament.setName(addMedToUserDTO.getNameOfTheMedicament());
+        if (addMedToUserDTO.getDescription() != null && !addMedToUserDTO.getDescription().isBlank()) {
+            medicament.setDirectionsForUse(addMedToUserDTO.getAmount());
+        }
+        medicament.setAmount(addMedToUserDTO.getAmount());
         return medicamentRepository.save(medicament);
     }
 }

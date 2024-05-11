@@ -39,6 +39,8 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final FirstAidKitRepository firstAidKitRepository;
     private final FirstAidKitUserRepository firstAidKitUserRepository;
+    private final NotificationService notificationService;
+
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -123,6 +125,20 @@ public class UserService implements UserDetailsService {
         firstAidKitUserRepository.save(firstAidKitUser);
 
         return ResponseEntity.ok(user.getFirstAidKits());
+    }
+
+    @Transactional
+    public ResponseEntity<?> notificationForAddingExistingFirstAidKitToUser(FirstAidKitIdUsernameDTO firstAidKitIdUsernameDTO) {
+        if (this.findByUsername(firstAidKitIdUsernameDTO.getUsername()).isEmpty()) {
+            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
+                    "Пользователь не найден"), HttpStatus.BAD_REQUEST);
+        }
+        if (firstAidKitRepository.findById(firstAidKitIdUsernameDTO.getFirst_aid_kit_id()).isEmpty()) {
+            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
+                    "Аптечка с переданным id не существует"), HttpStatus.BAD_REQUEST);
+        }
+
+        return notificationService.createNotificationForUser(firstAidKitIdUsernameDTO);
     }
 
 

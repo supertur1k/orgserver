@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -52,13 +53,30 @@ public class FirstAidKitMedicamentsService {
         }
         Medicament medicament;
         if (medicamentRepository.findByName(addMedToUserDTO.getNameOfTheMedicament()).isEmpty()) {
-            medicament = medicamentService.createNewMedicament(new MedicamentDTO(addMedToUserDTO.getNameOfTheMedicament(), ""));
+            medicament = medicamentService.createNewMedicament(addMedToUserDTO);
         } else {
             medicament = medicamentRepository.findByName(addMedToUserDTO.getNameOfTheMedicament()).get();
         }
 
-        Collection<Medicament> medicamentCollection = firstAidKit.get().getMedicaments();
-        medicamentCollection.add(medicament);
+        Collection<Medicament> medicamentCollection;
+
+        if (firstAidKit.get().getMedicaments().stream().anyMatch(x -> x.getName()
+                .equals(addMedToUserDTO.getNameOfTheMedicament()))) {
+            medicamentCollection = firstAidKit.get().getMedicaments();
+            Medicament existMed = medicamentCollection.stream().filter(x -> x.getName()
+                    .equals(addMedToUserDTO.getNameOfTheMedicament())).findFirst().get();
+            try {
+                int old_amount = Integer.parseInt(existMed.getAmount());
+                int new_amount = Integer.parseInt(addMedToUserDTO.getAmount()) + old_amount;
+                existMed.setAmount(Integer.toString(new_amount));
+            } catch (Exception e) {
+                existMed.setAmount(existMed.getAmount() + "\n" + addMedToUserDTO.getAmount());
+            }
+        } else {
+            medicamentCollection = firstAidKit.get().getMedicaments();
+            medicamentCollection.add(medicament);
+        }
+
         firstAidKit.get().setMedicaments(medicamentCollection);
         firstAidKitRepository.save(firstAidKit.get());
 

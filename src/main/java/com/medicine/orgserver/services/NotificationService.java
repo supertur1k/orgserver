@@ -1,5 +1,6 @@
 package com.medicine.orgserver.services;
 
+import com.medicine.orgserver.dto.FirstAidKitIdUsernameDTO;
 import com.medicine.orgserver.dto.ScheduleDTO;
 import com.medicine.orgserver.entities.Notification;
 import com.medicine.orgserver.entities.Schedule;
@@ -11,6 +12,7 @@ import com.medicine.orgserver.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.N;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,22 @@ public class NotificationService {
 
         Collection<Notification> notifications = notificationRepository.findByUsername(username)
                 .stream().filter(x->x.getDayOfTheWeek().isBefore(LocalDate.now().plusDays(1))).collect(Collectors.toList());
+        return ResponseEntity.ok(notifications);
+    }
+
+    @Transactional
+    public ResponseEntity<?> createNotificationForUser(FirstAidKitIdUsernameDTO firstAidKitIdUsernameDTO) {
+        Notification notification = new Notification();
+        notification.setIdOfTheSchedule(firstAidKitIdUsernameDTO.getFirst_aid_kit_id());
+        notification.setUsername(firstAidKitIdUsernameDTO.getUsername());
+        notification.setComment("system_user_invite");
+        notification.setDayOfTheWeek(LocalDate.now());
+        notification.setName("Приглашение в аптечку");
+        notificationRepository.save(notification);
+
+        Collection<Notification> notifications = notificationRepository.findByUsername(firstAidKitIdUsernameDTO.getUsername())
+                .stream().filter(x->x.getDayOfTheWeek().isBefore(LocalDate.now().plusDays(1))).collect(Collectors.toList());
+
         return ResponseEntity.ok(notifications);
     }
 
