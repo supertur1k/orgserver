@@ -59,7 +59,7 @@ public class ScheduleService {
         schedule.setDuration(scheduleDTO.getDuration());
         schedule.setDaysOfWeeks(scheduleDTO.getDaysOfWeeks());
         schedule.setTimes(scheduleDTO.getTimes());
-
+        schedule.setStartDate(LocalDate.now().toString());
         scheduleRepository.save(schedule);
         Long scheduleId = schedule.getIdOfSchedule();
 

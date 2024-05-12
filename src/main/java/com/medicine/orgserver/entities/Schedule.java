@@ -31,6 +31,8 @@ public class Schedule {
     @Column(nullable = false)
     private Integer duration;
 
+    @Column(nullable = false)
+    private String startDate;
 
     @ElementCollection
     @CollectionTable(name = "entity_days_of_weeks")
