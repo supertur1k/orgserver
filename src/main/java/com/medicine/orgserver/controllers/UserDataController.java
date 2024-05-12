@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "user_data")
 @Slf4j
 @RestController
@@ -39,6 +41,20 @@ public class UserDataController {
     description = "Если у аптечки нет других пользователей, она сотрется из хранилища.")
     public ResponseEntity<?> removeFirstAndFromForUser(@RequestBody FirstAidKitIdUsernameDTO firstAidKitIdUsernameDTO) {
         return userService.removeFirstAidFromForUser(firstAidKitIdUsernameDTO);
+    }
+
+    @GetMapping("/getUsersOfFaks")
+    @Operation(summary = "Получить пользователей аптечек",
+            description = "Возвращает список пользователей приложения, подключенных к переданным аптечкам.")
+    public ResponseEntity<?> getUsersOfFaks(@RequestBody ListFaksDto ids) {
+        return userService.getUsersOfFaks(ids);
+    }
+
+    @PostMapping("/getNotificationsOfAllUsersOfFaks")
+    @Operation(summary = "Возвращает список прочитанных уведомлений всех пользователей аптечек",
+            description = "Для всех переданных аптечек смотрит владельцев, возвращает список всех прочитанных уведомлений по всем пользователям.")
+    public ResponseEntity<?> getNotificationsOfAllUsersOfFaks(@RequestBody ListFaksDto ids) {
+        return userService.getNotificationsOfAllUsersOfFaks(ids);
     }
 
     @PostMapping("/addExistingFirstAidKitToUser")

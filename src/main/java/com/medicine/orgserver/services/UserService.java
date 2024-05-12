@@ -1,15 +1,14 @@
 package com.medicine.orgserver.services;
 
-import com.medicine.orgserver.dto.FirstAidKitDTO;
-import com.medicine.orgserver.dto.FirstAidKitIdUsernameDTO;
-import com.medicine.orgserver.dto.FirstAidKitIdUsernameDTO2Users;
-import com.medicine.orgserver.dto.RegUserDto;
+import com.medicine.orgserver.dto.*;
 import com.medicine.orgserver.entities.FirstAidKit;
 import com.medicine.orgserver.entities.FirstAidKitUser;
+import com.medicine.orgserver.entities.Notification;
 import com.medicine.orgserver.entities.User;
 import com.medicine.orgserver.exceptions.AppError;
 import com.medicine.orgserver.repositories.FirstAidKitRepository;
 import com.medicine.orgserver.repositories.FirstAidKitUserRepository;
+import com.medicine.orgserver.repositories.NotificationRepository;
 import com.medicine.orgserver.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +23,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +39,7 @@ public class UserService implements UserDetailsService {
     private final FirstAidKitUserRepository firstAidKitUserRepository;
     private final NotificationService notificationService;
 
+    private final NotificationRepository notificationRepository;
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -105,6 +103,61 @@ public class UserService implements UserDetailsService {
             firstAidKitRepository.deleteById(firstAidKitIdUsernameDTO.getFirst_aid_kit_id());
         }
         return ResponseEntity.ok(user.getFirstAidKits());
+    }
+
+    @Transactional
+    public ResponseEntity<?> getUsersOfFaks(ListFaksDto ids) {
+        for (Long id : ids.getFirst_aid_kit_ids()) {
+            if (firstAidKitRepository.findById(id).isEmpty()) {
+                return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
+                        "Аптечка с переданным id не существует"), HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        List<FirstAidKit> firstAidKits = new ArrayList<>();
+        for (Long id : ids.getFirst_aid_kit_ids()) {
+            firstAidKits.add(firstAidKitRepository.findById(id).get());
+        }
+
+        List<FirstAidKitUser> data = new ArrayList<>();
+        for (FirstAidKit firstAidKit : firstAidKits) {
+            data.addAll(firstAidKitUserRepository.findByFirstAidKitId(firstAidKit));
+        }
+
+        Collection<Long> userIds = new ArrayList<>();
+        data.forEach(x->userIds.add(x.getUser_id().getId()));
+
+        return ResponseEntity.ok(userIds);
+    }
+
+    @Transactional
+    public ResponseEntity<?> getNotificationsOfAllUsersOfFaks(ListFaksDto ids) {
+        for (Long id : ids.getFirst_aid_kit_ids()) {
+            if (firstAidKitRepository.findById(id).isEmpty()) {
+                return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
+                        "Аптечка с переданным id не существует"), HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        List<FirstAidKit> firstAidKits = new ArrayList<>();
+        for (Long id : ids.getFirst_aid_kit_ids()) {
+            firstAidKits.add(firstAidKitRepository.findById(id).get());
+        }
+
+        List<FirstAidKitUser> data = new ArrayList<>();
+        for (FirstAidKit firstAidKit : firstAidKits) {
+            data.addAll(firstAidKitUserRepository.findByFirstAidKitId(firstAidKit));
+        }
+
+        List<Long> userIds = new ArrayList<>();
+        data.forEach(x->userIds.add(x.getUser_id().getId()));
+
+        Collection<Notification> notifications = new ArrayList<>();
+        data.forEach(x -> {
+            notifications.addAll(notificationRepository.findByUsername(x.getUser_id().getUsername()));
+        });
+
+        return ResponseEntity.ok(notifications.stream().filter(x -> x.getReceived() && (x.getComment() == null || !x.getComment().startsWith("system_user_invite_from"))).collect(Collectors.toList()));
     }
 
     @Transactional
