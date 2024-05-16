@@ -16,7 +16,7 @@ public class Notification {
     @Column(nullable = false, unique = true)
     private Long idOfNotification;
 
-    @Column(nullable = false)
+    @Column
     private Long idOfTheSchedule;
 
     @Column(nullable = false)

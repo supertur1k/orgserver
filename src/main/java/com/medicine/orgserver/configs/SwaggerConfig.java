@@ -22,9 +22,9 @@ public class SwaggerConfig {
                 )
                 .info(
                   new Info()
-                          .title("title cats")
-                          .description("desc cats")
-                          .summary("summary cats")
+                          .title("Swagger MedicineOrganizer")
+                          .description("Swagger MedicineOrganizer")
+                          .summary("Swagger MedicineOrganizer")
                 );
     }
 }
